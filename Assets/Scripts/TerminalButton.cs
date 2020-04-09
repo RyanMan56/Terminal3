@@ -4,69 +4,61 @@ using System.Collections;
 public class TerminalButton : MonoBehaviour {
     private Vector3 offPos, onPos, depressedPos; // Not that depressed :(
     private Collider coll;
-    private Monitor terminalScript;
-    private Vector3? targetPos = null;
+    public Monitor terminalScript;
     private Rigidbody rb;
-    private float springConstant = 2.0f;
+    private bool depressed = false;
+    private ConfigurableJoint joint;
+    public AudioSource inSound;
+    public AudioSource outSound;
+
 
     // Use this for initialization
     void Start () {
         coll = GetComponent<Collider>();
-        terminalScript = GetComponentInParent<Monitor>();
         rb = GetComponent<Rigidbody>();
-
-        offPos = new Vector3(transform.localPosition.x, transform.localPosition.y, -0.0255f);
-        onPos = new Vector3(transform.localPosition.x, transform.localPosition.y, -0.0138f);
-        depressedPos = new Vector3(transform.localPosition.x, transform.localPosition.y, -0.0074f);
-
-        transform.localPosition = terminalScript.on ? onPos : offPos;
+        joint = GetComponent<ConfigurableJoint>();
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        if (targetPos.HasValue)
+        if (Input.GetMouseButton(0))
         {
-            HandlePresses();
-        }
-        else
+            Ray ray = Camera.main.ScreenPointToRay(new Vector2((Screen.width - 1) / 2, (Screen.height - 1) / 2));
+            RaycastHit hit;
+            bool buttonPressed = Physics.Raycast(ray, out hit, 1.5f);
+            if (buttonPressed && (hit.collider.Equals(coll)))
+            {
+                rb.AddRelativeForce(-Vector3.back * 5.0f);
+            }
+        }        
+
+        if (!rb.IsSleeping())
         {
-            if (Input.GetMouseButton(0))
-            {
-                Ray ray = Camera.main.ScreenPointToRay(new Vector2((Screen.width - 1) / 2, (Screen.height - 1) / 2));
-                RaycastHit hit;
-                bool buttonPressed = Physics.Raycast(ray, out hit, 1.5f);
-                if (buttonPressed && (hit.collider.Equals(coll)))
-                {
-                    targetPos = depressedPos;
-                    rb.velocity = Vector3.zero;
-                }
-            }
-
-            if (transform.localPosition.z > (terminalScript.on ? onPos.z : offPos.z))
-            {
-                CalculateSpring();
-            }
-            else
-            {
-                rb.velocity = Vector3.zero;
-            }
+            FindDistanceBetweenBodies();
         }
-	}
+    }
 
-    void HandlePresses()
+    void FindDistanceBetweenBodies()
     {
-        if (transform.localPosition.z < targetPos.Value.z)
+        Vector3 buttonAnchor = (transform.TransformPoint(joint.anchor));
+        Vector3 backOfMonitor = joint.connectedBody.transform.TransformPoint(joint.connectedAnchor + -Vector3.back * 0.015f);
+
+        float distance = Vector3.Distance(buttonAnchor, backOfMonitor);
+        Debug.Log(distance);
+
+        if (!depressed && distance < 0.005f)
         {
-            rb.AddForce(-Vector3.back * 0.005f);
+            depressed = true;
+            inSound.Play();
         }
-        else
+        else if (depressed && distance > 0.01f)
         {
-            targetPos = null;
-            bool currentlyOn = terminalScript.on;
-            
-            if (currentlyOn)
-            {                
+            depressed = false;
+            outSound.Play();
+            if (terminalScript.on)
+            {
                 terminalScript.TurnScreenOff();
+
             }
             else
             {
@@ -74,11 +66,5 @@ public class TerminalButton : MonoBehaviour {
             }
         }
     }
-
-    void CalculateSpring()
-    {
-        float x = terminalScript.on ? onPos.z - transform.localPosition.z : offPos.z - transform.localPosition.z;
-        float F = Mathf.Abs(-springConstant * x);
-        rb.AddForce(Vector3.back * F);
-    }
 }
+
