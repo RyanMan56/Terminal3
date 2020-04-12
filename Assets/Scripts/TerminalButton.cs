@@ -2,7 +2,6 @@
 using System.Collections;
 
 public class TerminalButton : MonoBehaviour {
-    private Vector3 offPos, onPos, depressedPos; // Not that depressed :(
     private Collider coll;
     public Monitor terminalScript;
     private Rigidbody rb;
@@ -44,7 +43,6 @@ public class TerminalButton : MonoBehaviour {
         Vector3 backOfMonitor = joint.connectedBody.transform.TransformPoint(joint.connectedAnchor + -Vector3.back * 0.015f);
 
         float distance = Vector3.Distance(buttonAnchor, backOfMonitor);
-        Debug.Log(distance);
 
         if (!depressed && distance < 0.005f)
         {

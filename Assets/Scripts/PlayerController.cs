@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour {
         CheckMoveExit();
 	}
 
-    public float pushPower = 2.0F;
+    public float pushPower = 0.75f;
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         Rigidbody body = hit.collider.attachedRigidbody;
@@ -39,18 +39,21 @@ public class PlayerController : MonoBehaviour {
 
     void Move()
     {
-        float yAxisRot = Input.GetAxis("Mouse X") * mouseSensitivity;
-        transform.Rotate(0, yAxisRot, 0);
-
-        verticalRotation -= Input.GetAxis("Mouse Y") * mouseSensitivity;
-        verticalRotation = Mathf.Clamp(verticalRotation, -90, 90);
-        Camera.main.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
-
-        verticalVelocity += Physics.gravity.y * Time.deltaTime;
-
-        if (controller.isGrounded && Input.GetButton("Jump") && canMove)
+        if (canMove)
         {
-            verticalVelocity = jumpSpeed;
+            float yAxisRot = Input.GetAxis("Mouse X") * mouseSensitivity;
+            transform.Rotate(0, yAxisRot, 0);
+
+            verticalRotation -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+            verticalRotation = Mathf.Clamp(verticalRotation, -90, 90);
+            Camera.main.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
+
+            verticalVelocity += Physics.gravity.y * Time.deltaTime;
+
+            if (controller.isGrounded && Input.GetButton("Jump"))
+            {
+                verticalVelocity = jumpSpeed;
+            }
         }
 
         speed = canMove ? defaultSpeed : speed * 0.9f;

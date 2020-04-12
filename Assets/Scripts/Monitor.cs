@@ -342,6 +342,8 @@ public class Monitor : MonoBehaviour
         canvas.gameObject.SetActive(false);
         on = false;
         _playerController.canMove = true;
+
+        transform.Find("Light").gameObject.SetActive(false);
     }
 
     public void TurnScreenOn()
@@ -352,5 +354,7 @@ public class Monitor : MonoBehaviour
         screen.GetComponent<MeshRenderer>().sharedMaterial = onMat;
         canvas.gameObject.SetActive(true);
         on = true;
+
+        transform.Find("Light").gameObject.SetActive(true);
     }
 }
