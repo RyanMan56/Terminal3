@@ -27,6 +27,11 @@ public class Monitor : MonoBehaviour
     public Material onMat;
     public Material offMat;
 
+    private bool isBeingCarried = false;
+    public Transform button;
+    private Transform originalButtonParent;
+
+
     // Use this for initialization
     void Start()
     {
@@ -68,7 +73,7 @@ public class Monitor : MonoBehaviour
     {
         if (on)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !isBeingCarried)
             {
                 Ray ray = Camera.main.ScreenPointToRay(new Vector2((Screen.width - 1) / 2, (Screen.height - 1) / 2));
                 RaycastHit hit;
@@ -356,5 +361,22 @@ public class Monitor : MonoBehaviour
         on = true;
 
         transform.Find("Light").gameObject.SetActive(true);
+    }
+
+    public void OnCarry()
+    {
+        isBeingCarried = true;
+
+        originalButtonParent = button.transform.parent;
+        button.transform.parent = transform;
+        button.GetComponent<Rigidbody>().isKinematic = true;
+    }
+
+    public void OnDrop()
+    {
+        isBeingCarried = false;
+
+        button.transform.parent = originalButtonParent;
+        button.GetComponent<Rigidbody>().isKinematic = false;
     }
 }

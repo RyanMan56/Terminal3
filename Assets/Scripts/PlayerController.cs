@@ -10,6 +10,11 @@ public class PlayerController : MonoBehaviour {
     private float verticalRotation = 0;
     private float jumpSpeed = 5.0f;
     public bool canMove;
+    private Transform heldObject = null;
+    private float? heldObjectDistance = null;
+    float? oldYRot = null, oldXRot = null;
+    private float throwForce = 10.0f;
+    private float scrollSpeed = 30.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -22,6 +27,14 @@ public class PlayerController : MonoBehaviour {
         Move();
         CheckMoveExit();
 	}
+
+    private void LateUpdate()
+    {
+        if (canMove)
+        {
+            PickUpAndCarry();
+        }
+    }
 
     public float pushPower = 0.75f;
     void OnControllerColliderHit(ControllerColliderHit hit)
@@ -71,4 +84,86 @@ public class PlayerController : MonoBehaviour {
             canMove = true;
         }
     }
+
+    void PickUpAndCarry()
+    {
+        if (heldObject == null && Input.GetMouseButtonDown(1))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(new Vector2((Screen.width - 1) / 2, (Screen.height - 1) / 2));
+            RaycastHit hit;
+            bool shouldPickUp = Physics.Raycast(ray, out hit, 1.5f) && hit.transform.tag == "Carryable";
+            if (shouldPickUp)
+            {
+                heldObject = hit.transform;
+                heldObjectDistance = Vector3.Distance(Camera.main.transform.position, hit.transform.position);
+                heldObject.GetComponent<Rigidbody>().isKinematic = true;
+                heldObject.SendMessage("OnCarry");
+            }
+            
+        } else if (heldObject)
+        {
+            if (!heldObjectDistance.HasValue)
+            {
+                heldObjectDistance = 1.5f;
+            }
+            heldObject.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, heldObjectDistance.Value));
+            if (oldYRot.HasValue)
+            {
+                heldObject.Rotate(Vector3.up * (transform.eulerAngles.y - oldYRot.Value), Space.World);
+                //Debug.Log($"old: {oldYRot.Value}, new: {transform.eulerAngles.y}");
+
+                //Vector3 perp = Vector3.Cross(Vector3.up, transform.forward).normalized;                
+            }
+            float scrollDelta = Input.GetAxis("Mouse ScrollWheel");
+            Debug.DrawRay(transform.position, Vector3.Cross(transform.forward, Vector3.up), Color.red);
+            if (scrollDelta != 0.0f)
+            {
+                Debug.Log(scrollDelta);
+                //heldObject.Rotate(Vector3.right * scrollDelta * scrollSpeed, Space.Self);
+                heldObject.Rotate((Vector3.Cross(Vector3.up, transform.forward)) * scrollDelta * scrollSpeed, Space.World);
+            }
+            //if (oldXRot.HasValue)
+            //{
+            //    Debug.DrawRay(transform.position, transform.right, Color.green);
+            //    Debug.DrawRay(transform.position, heldObject.right, Color.red);
+            //    //heldObject.Rotate(heldObject.right * (Camera.main.transform.eulerAngles.x - oldXRot.Value), Space.Self);
+            //    heldObject.Rotate(Vector3.right * (Camera.main.transform.eulerAngles.x - oldXRot.Value), Space.Self);
+            //}
+            oldYRot = transform.eulerAngles.y;
+            oldXRot = Camera.main.transform.eulerAngles.x;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                ThrowObject();
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                ReleaseObject();
+            }
+        }
+    }
+
+    void ReleaseObject()
+    {
+        heldObject.GetComponent<Rigidbody>().isKinematic = false;
+        heldObject.SendMessage("OnDrop");
+        heldObject = null;
+        heldObjectDistance = null;
+        oldYRot = null;
+        oldXRot = null;
+    }
+
+    void ThrowObject()
+    {
+        Rigidbody heldRb = heldObject.GetComponent<Rigidbody>();
+        heldRb.isKinematic = false;
+        heldRb.AddForce(Camera.main.transform.forward * throwForce, ForceMode.Impulse);
+        heldObject.SendMessage("OnDrop");
+        heldObject = null;
+        heldObjectDistance = null;
+        oldYRot = null;
+        oldXRot = null;
+    }
+
 }
