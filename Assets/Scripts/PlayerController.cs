@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour {
     float? oldYRot = null, oldXRot = null;
     private float throwForce = 10.0f;
     private float scrollSpeed = 30.0f;
+    public Transform hand;
 
 	// Use this for initialization
 	void Start () {
@@ -106,6 +107,15 @@ public class PlayerController : MonoBehaviour {
             {
                 heldObjectDistance = 1.5f;
             }
+            Ray ray = Camera.main.ScreenPointToRay(new Vector2((Screen.width - 1) / 2, (Screen.height - 1) / 2));
+            RaycastHit hit;
+            int combinedMask = ~(1 << LayerMask.NameToLayer("Player") | (1 << LayerMask.NameToLayer("Hand")));
+            bool didHit = Physics.Raycast(ray, out hit, heldObjectDistance.Value, combinedMask) && !ReferenceEquals(hit.transform, heldObject);
+            if (didHit)
+            {
+                Debug.Log(hit.transform.gameObject.layer);
+            }
+            hand.position = didHit ? hit.point : Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, heldObjectDistance.Value));
             heldObject.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, heldObjectDistance.Value));
             if (oldYRot.HasValue)
             {
