@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 763371884534095967}
-  - component: {fileID: 763371884534095952}
   m_Layer: 0
   m_Name: Keyboard
   m_TagString: Untagged
@@ -28,83 +27,8 @@ Transform:
   m_LocalPosition: {x: -1.0355947, y: 1.057, z: 3.9728918}
   m_LocalScale: {x: 3.9479964, y: 3.947998, z: 3.947998}
   m_Children:
-  - {fileID: 9082608551705146018}
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &763371884534095952
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 763371884534095953}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.36151618, y: 0.012766209, z: 0.10434585}
-  m_Center: {x: -0.032633677, y: 0.008491553, z: -0.05088906}
---- !u!1 &1873669061080281147
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 763371883736173778}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9082608551705146018}
-  m_Layer: 0
-  m_Name: KeyboardTexture (Missing Prefab)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9082608551705146018
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 763371883736173778}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1873669061080281147}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
   - {fileID: 763371883736045136}
-  m_Father: {fileID: 763371884534095967}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &4085224779600877775
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 763371883736173778}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 763371883736045136}
-  m_Layer: 0
-  m_Name: Missing Prefab (Dummy)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &763371883736045136
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 400002, guid: 86d6c77c883a19c49b0b879297b536c7,
-    type: 3}
-  m_PrefabInstance: {fileID: 763371883736173778}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4085224779600877775}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 9082608551705146018}
+  m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &763371883736173778
@@ -184,3 +108,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86d6c77c883a19c49b0b879297b536c7, type: 3}
+--- !u!4 &763371883736045136 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400002, guid: 86d6c77c883a19c49b0b879297b536c7,
+    type: 3}
+  m_PrefabInstance: {fileID: 763371883736173778}
+  m_PrefabAsset: {fileID: 0}

@@ -368,15 +368,15 @@ public class Monitor : MonoBehaviour
         isBeingCarried = true;
 
         originalButtonParent = button.transform.parent;
-        button.transform.parent = transform;
-        button.GetComponent<Rigidbody>().isKinematic = true;
+        //button.transform.parent = transform;
+        //button.GetComponent<Rigidbody>().isKinematic = true;
     }
 
     public void OnDrop()
     {
         isBeingCarried = false;
 
-        button.transform.parent = originalButtonParent;
-        button.GetComponent<Rigidbody>().isKinematic = false;
+        //button.transform.parent = originalButtonParent;
+        //button.GetComponent<Rigidbody>().isKinematic = false;
     }
 }

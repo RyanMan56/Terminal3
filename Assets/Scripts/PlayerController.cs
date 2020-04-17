@@ -97,8 +97,11 @@ public class PlayerController : MonoBehaviour {
             {
                 heldObject = hit.transform;
                 heldObjectDistance = Vector3.Distance(Camera.main.transform.position, hit.transform.position);
-                heldObject.GetComponent<Rigidbody>().isKinematic = true;
                 heldObject.SendMessage("OnCarry");
+                hand.gameObject.SetActive(true);
+                ConfigurableJoint joint = hand.GetComponent<ConfigurableJoint>();
+                joint.connectedBody = heldObject.GetComponent<Rigidbody>();
+                //joint.connectedAnchor = heldObject.position;
             }
             
         } else if (heldObject)
@@ -111,34 +114,16 @@ public class PlayerController : MonoBehaviour {
             RaycastHit hit;
             int combinedMask = ~(1 << LayerMask.NameToLayer("Player") | (1 << LayerMask.NameToLayer("Hand")));
             bool didHit = Physics.Raycast(ray, out hit, heldObjectDistance.Value, combinedMask) && !ReferenceEquals(hit.transform, heldObject);
-            if (didHit)
-            {
-                Debug.Log(hit.transform.gameObject.layer);
-            }
             hand.position = didHit ? hit.point : Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, heldObjectDistance.Value));
-            heldObject.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, heldObjectDistance.Value));
             if (oldYRot.HasValue)
             {
-                heldObject.Rotate(Vector3.up * (transform.eulerAngles.y - oldYRot.Value), Space.World);
-                //Debug.Log($"old: {oldYRot.Value}, new: {transform.eulerAngles.y}");
-
-                //Vector3 perp = Vector3.Cross(Vector3.up, transform.forward).normalized;                
+                hand.Rotate(Vector3.up * (transform.eulerAngles.y - oldYRot.Value), Space.World);
             }
             float scrollDelta = Input.GetAxis("Mouse ScrollWheel");
-            Debug.DrawRay(transform.position, Vector3.Cross(transform.forward, Vector3.up), Color.red);
             if (scrollDelta != 0.0f)
             {
-                Debug.Log(scrollDelta);
-                //heldObject.Rotate(Vector3.right * scrollDelta * scrollSpeed, Space.Self);
-                heldObject.Rotate((Vector3.Cross(Vector3.up, transform.forward)) * scrollDelta * scrollSpeed, Space.World);
+                hand.Rotate((Vector3.Cross(Vector3.up, transform.forward)) * scrollDelta * scrollSpeed, Space.World);
             }
-            //if (oldXRot.HasValue)
-            //{
-            //    Debug.DrawRay(transform.position, transform.right, Color.green);
-            //    Debug.DrawRay(transform.position, heldObject.right, Color.red);
-            //    //heldObject.Rotate(heldObject.right * (Camera.main.transform.eulerAngles.x - oldXRot.Value), Space.Self);
-            //    heldObject.Rotate(Vector3.right * (Camera.main.transform.eulerAngles.x - oldXRot.Value), Space.Self);
-            //}
             oldYRot = transform.eulerAngles.y;
             oldXRot = Camera.main.transform.eulerAngles.x;
 
@@ -162,6 +147,7 @@ public class PlayerController : MonoBehaviour {
         heldObjectDistance = null;
         oldYRot = null;
         oldXRot = null;
+        hand.gameObject.SetActive(false);
     }
 
     void ThrowObject()
@@ -174,6 +160,7 @@ public class PlayerController : MonoBehaviour {
         heldObjectDistance = null;
         oldYRot = null;
         oldXRot = null;
+        hand.gameObject.SetActive(false);
     }
 
 }
